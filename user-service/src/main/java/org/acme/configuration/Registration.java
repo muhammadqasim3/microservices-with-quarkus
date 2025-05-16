@@ -5,20 +5,41 @@ import io.quarkus.runtime.StartupEvent;
 import com.ecwid.consul.v1.ConsulClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class Registration {
+
+    @ConfigProperty(name = "quarkus.consul.agent.host")
+    String consulHost;
+    @ConfigProperty(name = "quarkus.consul.agent.port")
+    String consulPort;
+    @ConfigProperty(name = "service.id")
+    String serviceId;
+    @ConfigProperty(name = "service.name")
+    String serviceName;
+    @ConfigProperty(name = "service.host")
+    String serviceHost;
+    @ConfigProperty(name = "service.port")
+    String servicePort;
+    @ConfigProperty(name = "quarkus.consul.health-check-http-url")
+    String healthCheckUrl;
+    @ConfigProperty(name = "quarkus.consul.health-check-interval")
+    String healthCheckInterval;
+    @ConfigProperty(name = "quarkus.consul.health-check-timeout")
+    String healthCheckTimeout;
+
     public void init(@Observes StartupEvent ev) {
-        ConsulClient client = new ConsulClient("localhost", 8500);
+        ConsulClient client = new ConsulClient(consulHost, Integer.parseInt(consulPort));
         NewService newService = new NewService();
-        newService.setId("user-service-1");
-        newService.setName("user-service");
-        newService.setAddress("localhost");
-        newService.setPort(8081);
+        newService.setId(serviceId);
+        newService.setName(serviceName);
+        newService.setAddress(serviceHost);
+        newService.setPort(Integer.valueOf(servicePort));
         NewService.Check check = new NewService.Check();
-        check.setHttp("http://localhost:8081/q/health");
-        check.setInterval("10s");
-        check.setTimeout("5s");
+        check.setHttp(healthCheckUrl);
+        check.setInterval(healthCheckInterval);
+        check.setTimeout(healthCheckTimeout);
         newService.setCheck(check);
         client.agentServiceRegister(newService);
     }
