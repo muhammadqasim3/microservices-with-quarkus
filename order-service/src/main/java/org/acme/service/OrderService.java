@@ -74,4 +74,11 @@ public class OrderService {
         }
         return userResponse;
     }
+
+    @GET
+    @Path("/consul/{orderId}")
+    public String getOrder(@PathParam("orderId") String orderId) {
+        UserDTO user = userClientService.getUserById(1L);
+        return "Order ID: " + orderId + " belongs to User: " + user.getName();
+    }
 }

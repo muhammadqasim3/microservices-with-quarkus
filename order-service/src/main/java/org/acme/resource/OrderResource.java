@@ -1,11 +1,18 @@
 package org.acme.resource;
 
+import com.ecwid.consul.v1.ConsulClient;
+import io.vertx.ext.consul.ServiceEntry;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.acme.configuration.UserClientService;
 import org.acme.dto.UserDTO;
 import org.acme.entity.Order;
 import org.acme.service.OrderService;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.List;
 
@@ -18,6 +25,19 @@ public class OrderResource {
 
     public OrderResource(OrderService orderService) {
         this.orderService = orderService;
+    }
+
+    @Inject
+    @RestClient
+    UserClientService userServiceClient;
+
+    @Inject
+    ConsulClient consulClient;
+
+    @GET
+    @Path("/user-hello")
+    public String getHello() {
+        return "Success!";
     }
 
     // Create a new order
@@ -67,7 +87,42 @@ public class OrderResource {
     @GET
     @Path("/users/{id}")
     public UserDTO getUserDetails(@PathParam("id") Long id) {
+        System.out.println("getUserDetails");
         return orderService.getUserDetails(id);
     }
+
+    @GET
+    @Path("/{orderId}")
+    public String getOrder(@PathParam("orderId") String orderId) {
+        // Discover the user-service from Consul
+        List<ServiceEntry> userServiceEntries = consulClient.getCatalogService("user-service", null).getValue();
+
+        if (userServiceEntries == null || userServiceEntries.isEmpty()) {
+            throw new RuntimeException("User service not found in Consul");
+        }
+
+        // Get the first user service instance
+        ServiceEntry userService = userServiceEntries.get(0);
+        String userServiceAddress = userService.getService().getAddress();
+        int userServicePort = userService.getService().getPort();
+
+        // Construct the URL to call the user service
+        String userServiceUrl = "http://" + userServiceAddress + ":" + userServicePort + "/users/1";
+
+        // Create HTTP client to call the user service
+        Client client = ClientBuilder.newClient();
+        Response response = client.target(userServiceUrl).request().get();
+
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Failed to get user from user-service");
+        }
+
+        // Get the response body
+        String userResponse = response.readEntity(String.class);
+
+        return "Order ID: " + orderId + " belongs to User: " + userResponse;
+    }
+
+
 
 }

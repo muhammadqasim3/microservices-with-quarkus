@@ -11,9 +11,9 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class Registration {
 
 
-    @ConfigProperty(name = "stork.user-service.service-discovery.consul-host")
+    @ConfigProperty(name = "quarkus.consul.agent.host")
     String consulHost;
-    @ConfigProperty(name = "stork.user-service.service-discovery.consul-port")
+    @ConfigProperty(name = "quarkus.consul.agent.port")
     String consulPort;
     @ConfigProperty(name = "service.id")
     String serviceId;

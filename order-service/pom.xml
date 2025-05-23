@@ -49,6 +49,7 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
+            <version>3.22.3</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -68,6 +69,12 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-client</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-rest-client-reactive -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-reactive</artifactId>
+            <version>3.15.5</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -89,8 +96,29 @@
             <artifactId>consul-api</artifactId>
             <version>1.4.5</version>
         </dependency>
-    </dependencies>
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.smallrye.stork/stork-core &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>io.smallrye.stork</groupId>-->
+<!--            <artifactId>stork-core</artifactId>-->
+<!--            <version>2.7.3</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.smallrye.stork/stork-service-discovery-consul &ndash;&gt;-->
+<!--        <dependency>-->
+        <!-- https://mvnrepository.com/artifact/io.smallrye.stork/stork-service-discovery-static-list -->
+        <dependency>
+            <groupId>io.smallrye.stork</groupId>
+            <artifactId>stork-service-discovery-static-list</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.stork</groupId>
+            <artifactId>stork-service-discovery-consul</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-flyway</artifactId>
+        </dependency>
 
+    </dependencies>
     <build>
         <plugins>
             <plugin>
