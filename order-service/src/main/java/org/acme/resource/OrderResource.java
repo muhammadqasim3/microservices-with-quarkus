@@ -91,38 +91,6 @@ public class OrderResource {
         return orderService.getUserDetails(id);
     }
 
-    @GET
-    @Path("/{orderId}")
-    public String getOrder(@PathParam("orderId") String orderId) {
-        // Discover the user-service from Consul
-        List<ServiceEntry> userServiceEntries = consulClient.getCatalogService("user-service", null).getValue();
-
-        if (userServiceEntries == null || userServiceEntries.isEmpty()) {
-            throw new RuntimeException("User service not found in Consul");
-        }
-
-        // Get the first user service instance
-        ServiceEntry userService = userServiceEntries.get(0);
-        String userServiceAddress = userService.getService().getAddress();
-        int userServicePort = userService.getService().getPort();
-
-        // Construct the URL to call the user service
-        String userServiceUrl = "http://" + userServiceAddress + ":" + userServicePort + "/users/1";
-
-        // Create HTTP client to call the user service
-        Client client = ClientBuilder.newClient();
-        Response response = client.target(userServiceUrl).request().get();
-
-        if (response.getStatus() != 200) {
-            throw new RuntimeException("Failed to get user from user-service");
-        }
-
-        // Get the response body
-        String userResponse = response.readEntity(String.class);
-
-        return "Order ID: " + orderId + " belongs to User: " + userResponse;
-    }
-
 
 
 }
