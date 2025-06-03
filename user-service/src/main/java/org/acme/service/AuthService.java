@@ -11,10 +11,14 @@ public class AuthService {
         long nowSecs = System.currentTimeMillis() / 1000;
         long expSecs = nowSecs + 3600;
 
-        return Jwt.issuer("auth-service")
+        return Jwt.claims()
+                .issuer("auth-service")
                 .subject("auth-service")
                 .groups("Admin")
                 .expiresAt(expSecs)
                 .sign();
+
     }
+
+
 }
